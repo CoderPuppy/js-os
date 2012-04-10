@@ -1,0 +1,6 @@
+[submodule "lib/cli-parser"]
+	path = lib/cli-parser
+	url = git://github.com/drewyoung1/cli-parser.git
+[submodule "lib/fs"]
+	path = lib/fs
+	url = git://github.com/drewyoung1/FilesystemJS.git
