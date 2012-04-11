@@ -14,14 +14,38 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 
 	var View = exports.View = (function() {
 		function View() {
+			var self = this;
+			
 			this.el = document.createElement('div');
-			
 			this.el.className = 'view';
-			
 			this.el.textContent = 'View: ' + '';
+			
+			// Way to run commands through the browser
+			this.runEl = document.createElement('div');
+			this.runEl.className = 'view-run-cmd';
+			
+			this.runCMDEl = document.createElement('textarea');
+			
+			this.runEl.appendChild(this.runCMDEl);
+			
+			this.runBtnEl = document.createElement('button');
+			this.runBtnEl.textContent = 'Run';
+			this.runBtnEl.addEventListener('click', function() {
+				self.terminal.runCMD(self.runCMDEl.value);
+			});
+			
+			this.runEl.appendChild(this.runBtnEl);
+			
+			this.el.appendChild(this.runEl);
 			
 			document.body.appendChild(this.el);
 		}
+		
+		View.prototype.setTerminal = function setMachine(terminal) {
+			this.terminal = terminal;
+			this.fs = this.terminal.fs;
+			this.currentDir = this.terminal.currentDir;
+		};
 		
 		View.prototype.createRunView = function createRunView(runContext, cmdLine) {
 			return new RunView(this, runContext, cmdLine);
@@ -44,7 +68,7 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 				return cmd.str;
 			}).join(' '));
 			
-			view.el.appendChild(this.el);
+			this.view.el.insertBefore(this.el, this.view.el.childNodes[this.view.el.childNodes.length - 1]);
 		}
 		
 		RunView.prototype.createCMDView = function createCMDView(cmdContext, cmd) {
@@ -68,18 +92,18 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			this.el.className = 'cmd-view';
 			this.el.textContent = htmlEscape('CMDView: ' + cmd.str);
 			
-			this.outputEl = document.createElement('ul');
+			this.outputEl = document.createElement('div');
+			this.outputEl.className = 'cmd-view-output';
 			this.el.appendChild(this.outputEl);
 			
-			runView.el.appendChild(this.el);
+			this.runView.el.insertBefore(this.el, this.runView.el.childNodes[1]);
 			
 			this.stream = new Stream();
 			
 			this.stream.on('data', function(data) {
-				var el = document.createElement('li');
-				el.textContent = data;
 				self.output.push(data);
-				self.outputEl.appendChild(el);
+				self.outputEl.innerHTML += "<br />";
+				self.outputEl.textContent += data;
 			});
 		}
 		
