@@ -102,8 +102,7 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			
 			this.stream.on('data', function(data) {
 				self.output.push(data);
-				self.outputEl.innerHTML += "<br />";
-				self.outputEl.textContent += data;
+				self.outputEl.innerHTML += (self.outputEl.childNodes.length > 0 ? '<br />' : '') + data;
 			});
 		}
 		
