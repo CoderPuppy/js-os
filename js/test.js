@@ -65,9 +65,9 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			
 			this.el.className = 'run-view';
 			
-			this.el.textContent = htmlEscape('RunView: ' + this.cmdLine.map(function(cmd) {
-				return cmd.str;
-			}).join(' '));
+			this.el.textContent = 'RunView: ' + this.cmdLine.map(function(cmd) {
+				return  ( cmd.joiner == '^' ? '' : ' ' + cmd.joiner ) + cmd.str + ' ';
+			}).join(' ');
 			
 			this.view.el.insertBefore(this.el, this.view.el.childNodes[this.view.el.childNodes.length - 1]);
 		}
