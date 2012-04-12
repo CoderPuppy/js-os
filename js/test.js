@@ -32,6 +32,7 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			this.runBtnEl.textContent = 'Run';
 			this.runBtnEl.addEventListener('click', function() {
 				self.terminal.runCMD(self.runCMDEl.value);
+				self.runCMDEl.value = '';
 			});
 			
 			this.runEl.appendChild(this.runBtnEl);
