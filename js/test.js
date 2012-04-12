@@ -72,20 +72,22 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			this.view.el.insertBefore(this.el, this.view.el.childNodes[this.view.el.childNodes.length - 1]);
 		}
 		
-		RunView.prototype.createCMDView = function createCMDView(cmdContext, cmd) {
-			return new CMDView(this, cmdContext, cmd);
+		RunView.prototype.createCMDView = function createCMDView(cmdContext, cmd, options) {
+			return new CMDView(this, cmdContext, cmd, options);
 		};
 		
 		return RunView;
 	})();
 	
 	var CMDView = exports.CMDView = (function() {
-		function CMDView(runView, cmdContext, cmd) {
+		function CMDView(runView, cmdContext, cmd, options) {
 			var self = this;
 			
 			this.runView = runView;
+			this.options = options || {};
 			this.cmdContext = cmdContext;
 			this.cmd = cmd;
+			this.pipe = this.options.pipe || false;
 			
 			this.output = [];
 			
@@ -97,7 +99,8 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			this.outputEl.className = 'cmd-view-output';
 			this.el.appendChild(this.outputEl);
 			
-			this.runView.el.insertBefore(this.el, this.runView.el.childNodes[1]);
+			if(this.pipe == 'later') this.runView.el.insertBefore(this.el, this.runView.el.childNodes[this.runView.el.childNodes.length - 1]);
+			else this.runView.el.appendChild(this.el);
 			
 			this.stream = new Stream();
 			
