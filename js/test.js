@@ -88,12 +88,18 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			this.cmdContext = cmdContext;
 			this.cmd = cmd;
 			this.pipe = this.options.pipe || false;
+			this.exitCode = 'Unknown';
 			
 			this.output = [];
 			
 			this.el = document.createElement('div');
 			this.el.className = 'cmd-view';
-			this.el.textContent = htmlEscape('CMDView: ' + cmd.str);
+			this.el.textContent = 'CMDView: ' + cmd.str;
+			
+			this.exitCodeEl = document.createElement('span');
+			this.exitCodeEl.className = 'cmd-view-exit-code';
+			this.exitCodeEl.textContent = this.exitCode;
+			this.el.appendChild(this.exitCodeEl);
 			
 			this.outputEl = document.createElement('div');
 			this.outputEl.className = 'cmd-view-output';
@@ -102,6 +108,7 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			if(this.pipe == 'later') this.runView.el.insertBefore(this.el, this.runView.el.childNodes[this.runView.el.childNodes.length - 1]);
 			else this.runView.el.appendChild(this.el);
 			
+			
 			this.stream = new Stream();
 			
 			this.stream.on('data', function(data) {
@@ -109,6 +116,11 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 				self.outputEl.innerHTML += (self.outputEl.childNodes.length > 0 ? '<br />' : '') + data;
 			});
 		}
+		
+		CMDView.prototype.setExitCode = function setExitCode(code) {
+			this.exitCode = code;
+			this.exitCodeEl.textContent = code;
+		};
 		
 		return CMDView;
 	})();
