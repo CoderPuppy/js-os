@@ -1,4 +1,6 @@
-define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, exports, os, Stream) {
+define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], function(require, exports, os, Stream, autoComplete) {
+	var AutoCompleter = autoComplete.AutoCompleter;
+	
 	var htmlBadChars = {
 		'|': '#124'
 	};
@@ -11,6 +13,28 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 		
 		return str;
 	}
+	
+	function getCaret(el) { 
+	  if (el.selectionStart) { 
+		return el.selectionStart; 
+	  } else if (document.selection) { 
+		el.focus(); 
+
+		var r = document.selection.createRange(); 
+		if (r == null) { 
+		  return 0; 
+		} 
+
+		var re = el.createTextRange(), 
+			rc = re.duplicate(); 
+		re.moveToBookmark(r.getBookmark()); 
+		rc.setEndPoint('EndToStart', re); 
+
+		return rc.text.length; 
+	  }  
+	  return 0; 
+	}
+
 
 	var View = exports.View = (function() {
 		function View() {
@@ -25,6 +49,12 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			this.runEl.className = 'view-run-cmd';
 			
 			this.runCMDEl = document.createElement('textarea');
+			this.runCMDEl.addEventListener('keyup', function() {
+				// Auto complete
+				var cursor = getCaret(this);
+				console.log('cursor:', cursor);
+				self.updateAutoCompleteList(self.autoCompleter.autoComplete(this.value, cursor, self.terminal));
+			});
 			
 			this.runEl.appendChild(this.runCMDEl);
 			
@@ -37,9 +67,16 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 			
 			this.runEl.appendChild(this.runBtnEl);
 			
+			this.autoCompleteListEl = document.createElement('ul');
+			this.autoCompleteListEl.className = 'view-autocomplete';
+			
+			this.runEl.appendChild(this.autoCompleteListEl);
+			
 			this.el.appendChild(this.runEl);
 			
 			document.body.appendChild(this.el);
+			
+			this.autoCompleter = new AutoCompleter(this.terminal);
 		}
 		
 		View.prototype.setTerminal = function setMachine(terminal) {
@@ -50,6 +87,27 @@ define(['require', 'exports', 'lib/index', 'lib/stream'], function(require, expo
 		
 		View.prototype.createRunView = function createRunView(runContext, cmdLine) {
 			return new RunView(this, runContext, cmdLine);
+		};
+		
+		View.prototype.updateAutoCompleteList = function updateAutoCompleteList(autoComplete) {
+			var tmpEl, self = this;
+			
+			this.autoCompleteListEl.innerHTML = 'AutoComplete:<br />';
+			
+			for(var i = 0; i < autoComplete.length; i++) {
+				tmpEl = document.createElement('li');
+				tmpEl.className = 'view-autocomplete-item';
+				tmpEl.textContent = autoComplete[i].name;
+				tmpEl.addEventListener('click', (function(i) {
+					return function() {
+						self.runCMDEl.value = autoComplete[i].full;
+					};
+				})(i));
+				
+				this.autoCompleteListEl.appendChild(tmpEl);
+			}
+			
+			return this;
 		};
 		
 		return View;
