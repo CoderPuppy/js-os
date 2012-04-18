@@ -63,6 +63,10 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 			this.runBtnEl.addEventListener('click', function() {
 				self.terminal.runCMD(self.runCMDEl.value);
 				self.runCMDEl.value = '';
+				// Auto complete
+				var cursor = getCaret(this);
+				console.log('cursor:', cursor);
+				self.updateAutoCompleteList(self.autoCompleter.autoComplete(this.value, cursor, self.terminal));
 			});
 			
 			this.runEl.appendChild(this.runBtnEl);
@@ -83,6 +87,11 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 			this.terminal = terminal;
 			this.fs = this.terminal.fs;
 			this.currentDir = this.terminal.currentDir;
+			
+			// Auto complete
+			var cursor = getCaret(this);
+			console.log('cursor:', cursor);
+			this.updateAutoCompleteList(this.autoCompleter.autoComplete(this.runCMDEl.value, cursor, this.terminal));
 		};
 		
 		View.prototype.createRunView = function createRunView(runContext, cmdLine) {
