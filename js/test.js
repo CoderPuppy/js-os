@@ -194,7 +194,17 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 	
 	var machine = exports.machine = new os.Machine('test_machine');
 	var view = exports.view = new View();
-	var terminal = exports.terminal = machine.createTerminal(view);
+	var user = exports.user = machine.createUser('testuser');
+	var terminal = exports.terminal = undefined;
+	var session = exports.session = undefined;
 	
-	console.log('echo hi:', terminal.runCMD('echo hi'));
+	machine.login('testuser', undefined, function(e, s) {
+		if(e) throw e;
+		
+		session = exports.session = s;
+		
+		terminal = session.terminal(view);
+		
+		console.log('echo hi:', terminal.runCMD('echo hi'));
+	});
 });
