@@ -1,8 +1,13 @@
-//define(['require', 'exports', 'lib/index.js'], function(require, exports, os) {
-require(['lib/index', 'js/test', 'lib/user'], function(os, test, user) {
-	window.os = os;
-	window.Machine = os.Machine;
-	window.test = test;
-	window.User = user.User;
-});
+define(['require', 'exports', '../fs/index', '../fs/bootloader'], function(require, exports, filesystem, bootloader) {
+//require(['./fs/index.js', './fs/bootloader.js'], function(filesystem, bootloader) {
+	var BootLoader = bootloader.BootLoader;
+	var Filesystem = filesystem.Filesystem;
+	
+	var fs = exports.fs = new Filesystem({root: {files: {}, name: "FILESYSTEM_ROOT_/"}});
+	var bootLoader = exports.bootLoader = new BootLoader(fs, {
+	
+	}, {
+		baseUrl: 'filesystem'
+	});
 //});
+});

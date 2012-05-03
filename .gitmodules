@@ -4,3 +4,12 @@
 [submodule "lib/fs"]
 	path = lib/fs
 	url = git://github.com/drewyoung1/FilesystemJS.git
+[submodule "filesystem/boot/fs"]
+        path = filesystem/boot/fs
+        url = git://github.com/drewyoung1/FilesystemJS.git
+[submodule "filesystem/boot/cli-parser"]
+	path = filesystem/boot/cli-parser
+	url = git://github.com/drewyoung1/cli-parser.git
+[submodule "fs"]
+	path = fs
+	url = git://github.com/drewyoung1/FilesystemJS.git
