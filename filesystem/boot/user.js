@@ -15,11 +15,10 @@ define(['require', 'exports',  './events', './session'], function(require, expor
 	};
 	
 	var User = exports.User = (function UserClass() { // Users start here
-		function User(machine, name, authMethod) { // more precisly right here: the machine this user was created on, it's username and how it should authenticate
+		function User(name, authMethod) { // more precisly right here: the machine this user was created on, it's username and how it should authenticate
 			var self = this; // save this
 			var __password; // keep the password private
 			
-			this.machine = machine; // save the machine
 			this.name = name; // and it's name
 			
 			this._authMethod = authMethod || 'always'; // and also how to authenticate

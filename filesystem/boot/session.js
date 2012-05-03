@@ -1,7 +1,9 @@
-define(['require', 'exports', './env', './terminal', './fs/index'], function(require, exports, env, terminal, fs) {
-	var Terminal = terminal.Terminal; // Import Terminal
-	var Environment = env.Environment; // and also Environment
-	var Filesystem = fs.Filesystem; // we might need Filesystem
+define(function(require, exports, module) {
+	var Terminal = require('./terminal').Terminal; // Import Terminal
+	var Environment = require('./env').Environment; // and also Environment
+	var Filesystem = require('./fs/index').Filesystem; // we might need Filesystem
+	var fs = require('FS');
+	var globalEnv = require('./globalEnv');
 	
 	var Session = exports.Session = (function() { // Session's start here
 		function Session(user, level) { // or here: the user this is for and the level of permissions
@@ -12,9 +14,9 @@ define(['require', 'exports', './env', './terminal', './fs/index'], function(req
 			this.user = user; // save it's user
 			
 			this.machine = this.user.machine; // save the user's machine
-			this.fs = new Filesystem(this.machine.fs.data); // and create a filesystem with the main data so then we can have different view point (current directory)
+			this.fs = new Filesystem(fs.data); // and create a filesystem with the main data so then we can have different view point (current directory)
 			
-			this.env = new Environment(this.machine.env); // and create an environment to hold environment variables for this session only
+			this.env = new Environment(globalEnv); // and create an environment to hold environment variables for this session only
 			
 			Object.defineProperties(this, { // define some properties
 				level: { // let people get the level
