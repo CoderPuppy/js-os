@@ -1,52 +1,52 @@
 define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], function(require, exports, os, Stream, autoComplete) {
-	var AutoCompleter = autoComplete.AutoCompleter;
+	var AutoCompleter = autoComplete.AutoCompleter; // Import the AutoCompleter to get autocompletions
 	
-	var htmlBadChars = {
+	var htmlBadChars = { // the chars that need to be replaced
 		'|': '#124'
 	};
 	
-	function htmlEscape(str) {
-		var chars = Object.keys(htmlBadChars);
-		for(var i = 0; i < chars.length; i++) {
-			str = str.split(chars[i]).join('&' + htmlBadChars[chars[i]] + ';');
+	function htmlEscape(str) { // htmlEscape: escape a string
+		var chars = Object.keys(htmlBadChars); // get the characters to replace
+		for(var i = 0; i < chars.length; i++) { // loop through the character to replace
+			str = str.split(chars[i]).join('&' + htmlBadChars[chars[i]] + ';'); // and replace them
 		}
 		
-		return str;
+		return str; // return it
 	}
 	
-	function getCaret(el) { 
-	  if (el.selectionStart) { 
-		return el.selectionStart; 
-	  } else if (document.selection) { 
-		el.focus(); 
-
-		var r = document.selection.createRange(); 
-		if (r == null) { 
-		  return 0; 
-		} 
-
-		var re = el.createTextRange(), 
-			rc = re.duplicate(); 
-		re.moveToBookmark(r.getBookmark()); 
-		rc.setEndPoint('EndToStart', re); 
-
-		return rc.text.length; 
+	function getCaret(el) { // getCaret: get the position of the caret in el (not mine)
+	  if (el.selectionStart) {
+		return el.selectionStart;
+	  } else if (document.selection) {
+		el.focus();
+		
+		var r = document.selection.createRange();
+		if (r == null) {
+		  return 0;
+		}
+		
+		var re = el.createTextRange(),
+			rc = re.duplicate();
+		re.moveToBookmark(r.getBookmark());
+		rc.setEndPoint('EndToStart', re);
+		
+		return rc.text.length;
 	  }  
-	  return 0; 
+	  return 0;
 	}
 
 
-	var View = exports.View = (function() {
-		function View() {
-			var self = this;
+	var View = exports.View = (function() { // Class View
+		function View() { // Constructor
+			var self = this; // save this
 			
-			this.el = document.createElement('div');
-			this.el.className = 'view';
-			this.el.textContent = 'View: ' + '';
+			this.el = document.createElement('div'); // create the main element
+			this.el.className = 'view'; // add class view
+			this.el.textContent = 'View: ' + ''; // make it say "View:"
 			
 			// Way to run commands through the browser
-			this.runEl = document.createElement('div');
-			this.runEl.className = 'view-run-cmd';
+			this.runEl = document.createElement('div'); // the element that contains all run stuff
+			this.runEl.className = 'view-run-cmd'; // add class
 			
 			this.runCMDEl = document.createElement('textarea');
 			this.runCMDEl.addEventListener('keyup', function() {
@@ -192,19 +192,19 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 		return CMDView;
 	})();
 	
-	var machine = exports.machine = new os.Machine('test_machine');
-	var view = exports.view = new View();
-	var user = exports.user = machine.createUser('testuser');
+	var machine = exports.machine = new os.Machine('test_machine'); // create a machine
+	var view = exports.view = new View(); // create a view
+	var user = exports.user = machine.createUser('testuser'); // create a user
 	var terminal = exports.terminal = undefined;
 	var session = exports.session = undefined;
 	
-	machine.login('testuser', undefined, function(e, s) {
-		if(e) throw e;
+	machine.login('testuser', undefined, function(e, s) { // login
+		if(e) throw e; // error handling
 		
-		session = exports.session = s;
+		session = exports.session = s; // save the session
 		
-		terminal = session.terminal(view);
+		terminal = session.terminal(view); // create a terminal
 		
-		console.log('echo hi:', terminal.runCMD('echo hi'));
+		console.log('echo hi:', terminal.runCMD('echo hi')); // run a command
 	});
 });
