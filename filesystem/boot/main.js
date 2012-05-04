@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	var api = require('API'), fs = require('FS');
-	var User = require('./user').User;
+	var users = require('./users');
+	var globalEnv = require('./globalEnv');
 	
 	console.log(api, fs);
 });

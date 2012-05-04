@@ -1,6 +1,9 @@
-define(['require', 'exports',  './events', './session'], function(require, exports, events, session) {
-	var EventEmitter = events.EventEmitter; // Import EventEmitter
-	var Session = session.Session; // And also session
+define(function(require, exports, module) {
+	var EventEmitter = require('./events').EventEmitter; // Import EventEmitter
+	var Session = require('./session').Session; // And also session
+	var auth = require('./auth');
+	
+	var fs = require('FS');
 	
 	var inherits = function(ctor, superCtor) { // inherits: make one thing inherit from another
 	  ctor.super_ = superCtor; // set it's super_ to what it inherits from
@@ -14,6 +17,21 @@ define(['require', 'exports',  './events', './session'], function(require, expor
 	  });
 	};
 	
+	function initUserFolder(username) {
+		var folder = fs.folder(username, {
+			create: true,
+			dir: fs.folder('/home')
+		});
+		
+		fs.file('.rc', {
+			create: true,
+			type: fs.FILE,
+			dir: folder
+		}).contents = "echo This is from your ~/.rc";
+		
+		return folder;
+	}
+	
 	var User = exports.User = (function UserClass() { // Users start here
 		function User(name, authMethod) { // more precisly right here: the machine this user was created on, it's username and how it should authenticate
 			var self = this; // save this
@@ -22,6 +40,8 @@ define(['require', 'exports',  './events', './session'], function(require, expor
 			this.name = name; // and it's name
 			
 			this._authMethod = authMethod || 'always'; // and also how to authenticate
+			
+			initUserFolder(name);
 			
 			EventEmitter.call(this); // let this emit events
 			
@@ -38,8 +58,8 @@ define(['require', 'exports',  './events', './session'], function(require, expor
 					old = undefined; // and that we don't need a old password
 				}
 				
-				if(this.machine.auth(this._authMethod).authenticate(__password, old)) { // make sure we can change it
-					__password = this.machine.auth(this._authMethod).password(newP); // set it to the filtered result of the new password
+				if(auth.auth(this._authMethod).authenticate(__password, old)) { // make sure we can change it
+					__password = auth.auth(this._authMethod).password(newP); // set it to the filtered result of the new password
 				} else {
 					console.warn('Unable to change password'); // say oh no we can't change the password
 				}
@@ -68,7 +88,7 @@ define(['require', 'exports',  './events', './session'], function(require, expor
 				
 				options = options || {}; // make sure we have options
 				
-				if(this.machine.auth(this._authMethod).authenticate(__password, password)) { // check if the password was correct
+				if(auth.auth(this._authMethod).authenticate(__password, password)) { // check if the password was correct
 					this.emit('authenticate', options.level || User.BASIC, cb); // emit a general event
 					this.emit('athuenticate:' + ( options.level || User.BASIC ), cb) // and a more specific one
 					

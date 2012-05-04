@@ -1,8 +1,8 @@
-define(['require', 'exports', './commandParser', './events', './pipeSeq', './command'], function(require, exports, commandParser, events, pipeSeq, command) {
-	var Command = command.Command;
-	var CommandParser = commandParser.CommandParser;
-	var EventEmitter = events.EventEmitter;
-	var PipeSequence = pipeSeq.PipeSequence;
+define(function(require, exports, module) {
+	var Command = require('./command').Command;
+	var CommandParser = require('./commandParser').CommandParser;
+	var EventEmitter = require('./events').EventEmitter;
+	var PipeSequence = require('./pipeSeq').PipeSequence;
 	
 	var inherits = function(ctor, superCtor) {
 	  ctor.super_ = superCtor;

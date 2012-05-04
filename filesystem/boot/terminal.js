@@ -1,8 +1,7 @@
-define(['require', 'exports', './env', './events', './commandRunner', './runContext'], function(require, exports, env, events, commandRunner, runContext) {
-	var Environment = env.Environment; // import Environment (probably not needed)
-	var RunContext = runContext.RunContext; // let us create run contexts
-	var EventEmitter = events.EventEmitter; // emit events
-	var CommandRunner = commandRunner.CommandRunner; // we might want to be able to run commands
+define(function(require, exports, module) {
+	var RunContext = require('./runContext').RunContext; // let us create run contexts
+	var EventEmitter = require('./events').EventEmitter; // emit events
+	var CommandRunner = require('./commandRunner').CommandRunner; // we might want to be able to run commands
 	
 	var inherits = function(ctor, superCtor) { // inherits: make `ctor` inherit from `superCtor`
 	  ctor.super_ = superCtor; // save superCtor in ctor.super_

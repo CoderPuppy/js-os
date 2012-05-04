@@ -1,5 +1,5 @@
-define(['require', 'exports', './argument'], function(require, exports, argument) {
-	var Argument = argument.Argument;
+define(function(require, exports, module) {
+	var Argument = require('./argument').Argument;
 	
 	var Command = exports.Command = (function() {
 		function Command(cmd, terminal, runContext, options) {

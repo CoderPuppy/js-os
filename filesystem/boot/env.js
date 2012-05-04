@@ -1,6 +1,5 @@
-define(['require', 'exports', './command', './events'], function(require, exports, command, events) {
-	var CommandRunner = command.CommandRunner;
-	var EventEmitter = events.EventEmitter;
+define(function(require, exports, module) {
+	var EventEmitter = require('./events').EventEmitter;
 	
 	function clone(obj) {
 		function F() {}

@@ -1,5 +1,5 @@
-define(['require', 'exports', './cmdContext'], function(require, exports, cmdContext) {
-	var CMDContext = cmdContext.CMDContext;
+define(function(require, exports, module) {
+	var CMDContext = require('./cmdContext').CMDContext;
 	
 	function merge(dest, source) {
 		for(key in source) {

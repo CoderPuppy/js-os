@@ -1,4 +1,4 @@
-define(['require', 'exports'], function(require, exports) {
+define(function(require, exports, module) {
 	var types = exports.types = {
 		string: (function() {
 			function string() {

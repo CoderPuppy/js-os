@@ -1,4 +1,6 @@
-define(['require', 'exports', './stream'], function(require, exports, Stream) {
+define(function(require, exports, module) {
+	var Stream = require('./stream');
+	
 	var CMDContext = exports.CMDContext = (function() {
 		function CMDContext(runContext, cmd, options) {
 			this.runContext = runContext;

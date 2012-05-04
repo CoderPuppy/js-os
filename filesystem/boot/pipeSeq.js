@@ -1,5 +1,5 @@
-define(['require', 'exports', './command'], function(require, exports, command) {
-	var Command = command.Command;
+define(function(require, exports, module) {
+	var Command = require('./command').Command;
 	
 	var PipeSequence = exports.PipeSequence = (function() {
 		function PipeSequence(terminal) {

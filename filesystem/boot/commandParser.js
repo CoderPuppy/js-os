@@ -1,5 +1,5 @@
-define(['require', 'exports', './cli-parser/js/parser'], function(require, exports, cliParser) {
-	var CLIParser = cliParser.Parser;
+define(function(require, exports, module) {
+	var CLIParser = require('./cli-parser/js/parser').Parser;
 	
 	var merge = function merge(dest, source) {
 		for(key in source) {

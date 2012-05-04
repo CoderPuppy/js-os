@@ -1,11 +1,11 @@
 define(function(require, exports, module) {
 	var Environment = require('./env').Environment;
 	
-	function loadEnv() { // Should load from filesystem
+	function loadEnv() {
 		try { // to load it from the filesystem
-			console.log(JSON.parse(require('text!etc/environment.json')));
+			return JSON.parse(require('text!/etc/environment.json'));
 		} catch(e) {
-			console.error(e, e.message, e.arguments, e.stack, require('text!etc/environment.json'));
+			console.error(e, e.message, e.arguments, e.stack, require('text!/etc/environment.json'));
 		}
 		
 		return {
