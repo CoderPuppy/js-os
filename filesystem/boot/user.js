@@ -38,6 +38,7 @@ define(function(require, exports, module) {
 			var __password; // keep the password private
 			
 			this.name = name; // and it's name
+			this.sessions = [];
 			
 			this._authMethod = authMethod || 'always'; // and also how to authenticate
 			
@@ -49,7 +50,7 @@ define(function(require, exports, module) {
 				level = level || User.BASIC; // make sure it has a level at which to create it
 				
 				//return 'Terminal at: ' + level + ' level for: ' + self.name; // logging
-				return new Session(self, level); // Return a session for this and that level
+				return self.sessions[self.sessions.push(new Session(self, level)) - 1]; // Return a session for this and that level
 			}
 			
 			this.password = function password(old, newP) { // password: set the password: the old password and the new password
@@ -67,18 +68,7 @@ define(function(require, exports, module) {
 				return this; // and make it chainable
 			};
 			
-			this.authenticate = function authenticate(password, options, cb) { // authenticate: authenticate the user using the `password` at level `options.level` and call cb
-				if(typeof(options) == 'function') { // no options or options after callback
-					var t = cb; // save the options that might be after the callback
-					cb = options; // and set callback to the correct value
-					options = t || {}; // and then get the correct value for options for: the original callback || empty
-				}
-				
-				if(typeof(password) == 'function') { // no password or options
-					cb = password; // callback if the first argument
-					options = options || {}; // options || empty
-					password = undefined; // no password!!!
-				}
+			this.authenticate = function authenticate(password, options) { // authenticate: authenticate the user using the `password` at level `options.level` and call cb
 				
 				if(typeof(password) == 'object') { // no password but there are options
 					cb = options; // get the callback
@@ -92,9 +82,9 @@ define(function(require, exports, module) {
 					this.emit('authenticate', options.level || User.BASIC, cb); // emit a general event
 					this.emit('athuenticate:' + ( options.level || User.BASIC ), cb) // and a more specific one
 					
-					cb(undefined, privlegedSelf(options.level)); // and call the callback with a privleged self
+					return privlegedSelf(options.level);
 				} else {
-					cb(new Error('Could not authenticate: incorrect password')); // error send it to the callback
+					throw new Error('Could not authenticate: incorrect password');
 				}
 			};
 		}

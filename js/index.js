@@ -8,9 +8,12 @@ define(['require', 'exports', '../fs/index', '../fs/bootloader'], function(requi
 	
 	}, {
 		baseUrl: 'filesystem'
+	}, function(main) {
+		window.machine = main;
 	});
 	
 	window.fs = fs;
 	window.bootLoader = bootLoader;
+	window.machine = bootLoader.exports;
 //});
 });

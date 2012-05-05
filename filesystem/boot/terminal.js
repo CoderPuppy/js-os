@@ -29,10 +29,8 @@ define(function(require, exports, module) {
 			
 			this.session = session; // save the session
 			this.fs = this.session.fs; // and also it's filesystem
-			this.machine = this.session.machine; // and also the machine
-			this.env = new Environment(this.machine.env); // create an environment with global environment
+			this.env = this.session.env; // create an environment with global environment
 			this.commandRunner = new CommandRunner(this); // let us run commands
-			this.currentDir = this.fs.currentDir; // don't need this any more
 			this.view = view; // save the view
 			
 			this.runContexts = []; // to save all run contexts

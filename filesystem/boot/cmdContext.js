@@ -22,17 +22,6 @@ define(function(require, exports, module) {
 			
 			this.exitCode = undefined;
 			
-			Object.defineProperties(this, {
-				currentDir: {
-					get: function() {
-						return this.runContext.currentDir;
-					},
-					set: function(newDir) {
-						this.runContext.currentDir = newDir;
-					}
-				}
-			});
-			
 			this.pipes = {};
 			
 			var pipeName, file, fileStream;

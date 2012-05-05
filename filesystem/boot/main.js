@@ -4,4 +4,6 @@ define(function(require, exports, module) {
 	var globalEnv = require('./globalEnv');
 	
 	console.log(api, fs);
+	
+	exports.users = users;
 });

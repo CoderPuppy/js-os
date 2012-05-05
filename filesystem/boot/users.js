@@ -23,6 +23,6 @@ define(function(require, exports, module) {
 	var login = exports.login = function login(username, password, options, cb) {
 		if(!(users[username] instanceof User)) throw new Error('No such user: ' + username);
 		
-		users[username].authenticate(password, options, cb);
+		return users[username].authenticate(password, options, cb);
 	};
 });

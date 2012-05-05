@@ -13,7 +13,6 @@ define(function(require, exports, module) {
 			
 			this.user = user; // save it's user
 			
-			this.machine = this.user.machine; // save the user's machine
 			this.fs = new Filesystem(fs.data); // and create a filesystem with the main data so then we can have different view point (current directory)
 			
 			this.env = new Environment(globalEnv); // and create an environment to hold environment variables for this session only

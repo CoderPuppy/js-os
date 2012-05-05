@@ -16,17 +16,6 @@ define(function(require, exports, module) {
 			this.invisible = invisible;
 			if(!this.invisible) this.view = this.terminal.view.createRunView(this, this.cmdLine);
 			
-			Object.defineProperties(this, {
-				currentDir: {
-					get: function() {
-						return this.terminal.currentDir;
-					},
-					set: function(newDir) {
-						this.terminal.currentDir = newDir;
-					}
-				}
-			});
-			
 			this.fs = this.terminal.fs;
 			this.env = this.terminal.env;
 			
