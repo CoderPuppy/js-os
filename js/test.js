@@ -1,4 +1,4 @@
-define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], function(require, exports, os, Stream, autoComplete) {
+define(['require', 'exports', '../lib/index', '../lib/stream', '../lib/autocomplete'], function(require, exports, os, Stream, autoComplete) {
 	var AutoCompleter = autoComplete.AutoCompleter; // Import the AutoCompleter to get autocompletions
 	
 	var htmlBadChars = { // the chars that need to be replaced
@@ -34,10 +34,57 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 	  }  
 	  return 0;
 	}
+	
+	var MachineView = exports.MachineView = (function() {
+		function MachineView(machine) {
+			var self = this;
+			
+			this.machine = machine;
+			this.sessions = [];
+			
+			this.el = document.createElement('div');
+			
+			this.loginForm = document.createElement('div');
+			this.loginForm.onsubmit = function(e) {
+				self.sessions[self.sessions.push(self.machine.users.login(self.usernameEl.value, self.passwordEl.value)) - 1]
+					.terminal(new TerminalView(self));
+				
+				e.preventDefault();
+				
+				return false;
+			};
+			
+			this.el.appendChild(this.loginForm);
+			
+			this.usernameEl = document.createElement('input');
+			
+			this.loginForm.appendChild(this.usernameEl);
+			
+			this.passwordEl = document.createElement('input');
+			this.passwordEl.type = 'password';
+			
+			this.loginForm.appendChild(this.passwordEl);
+			
+			this.loginButton = document.createElement('input');
+			this.loginButton.type = 'button';
+			
+			this.loginButton.onclick = function(e) {
+				self.sessions[self.sessions.push(self.machine.users.login(self.usernameEl.value, self.passwordEl.value)) - 1]
+					.terminal(new TerminalView(self));
+				
+				e.preventDefault();
+				
+				return false;
+			};
+			
+			this.loginForm.appendChild(this.loginButton);
+		}
+		
+		return MachineView;
+	})();
 
-
-	var View = exports.View = (function() { // Class View
-		function View() { // Constructor
+	var TerminalView = exports.TerminalView = (function() { // Class View
+		function TerminalView(machineView) { // Constructor
 			var self = this; // save this
 			
 			this.el = document.createElement('div'); // create the main element
@@ -78,12 +125,12 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 			
 			this.el.appendChild(this.runEl);
 			
-			document.body.appendChild(this.el);
+			machineView.el.appendChild(this.el);
 			
 			this.autoCompleter = new AutoCompleter(this.terminal);
 		}
 		
-		View.prototype.setTerminal = function setMachine(terminal) {
+		TerminalView.prototype.setTerminal = function setMachine(terminal) {
 			this.terminal = terminal;
 			this.fs = this.terminal.fs;
 			this.currentDir = this.terminal.currentDir;
@@ -94,11 +141,11 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 			this.updateAutoCompleteList(this.autoCompleter.autoComplete(this.runCMDEl.value, cursor, this.terminal));
 		};
 		
-		View.prototype.createRunView = function createRunView(runContext, cmdLine) {
+		TerminalView.prototype.createRunView = function createRunView(runContext, cmdLine) {
 			return new RunView(this, runContext, cmdLine);
 		};
 		
-		View.prototype.updateAutoCompleteList = function updateAutoCompleteList(autoComplete) {
+		TerminalView.prototype.updateAutoCompleteList = function updateAutoCompleteList(autoComplete) {
 			var tmpEl, self = this;
 			
 			this.autoCompleteListEl.innerHTML = 'AutoComplete:<br />';
@@ -119,7 +166,7 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 			return this;
 		};
 		
-		return View;
+		return TerminalView;
 	})();
 	
 	var RunView = exports.RunView = (function() {
@@ -192,7 +239,7 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 		return CMDView;
 	})();
 	
-	var machine = exports.machine = new os.Machine('test_machine'); // create a machine
+	/*var machine = exports.machine = new os.Machine('test_machine'); // create a machine
 	var view = exports.view = new View(); // create a view
 	var user = exports.user = machine.createUser('testuser'); // create a user
 	var terminal = exports.terminal = undefined;
@@ -206,5 +253,9 @@ define(['require', 'exports', 'lib/index', 'lib/stream', 'lib/autocomplete'], fu
 		terminal = session.terminal(view); // create a terminal
 		
 		console.log('echo hi:', terminal.runCMD('echo hi')); // run a command
-	});
+	});*/
+	
+	/*var view = new MachineView(require('./index').machine);
+	
+	document.body.appendChild(view.el);*/
 });

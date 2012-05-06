@@ -93,11 +93,11 @@ define(function(require, exports, module) {
 					}
 				}
 			
-				if(this.fs.hasFile(this.fs.getFile(cmdSplit.slice(0, cmdSplit.length - 1).join('/'), this.currentDir), cmdSplit[cmdSplit.length - 1])) { // check for it in the current dir
+				/*if(this.fs.hasFile(this.fs.getFile(cmdSplit.slice(0, cmdSplit.length - 1).join('/'), this.currentDir), cmdSplit[cmdSplit.length - 1])) { // check for it in the current dir
 					if(this.fs.isExec(tmpFile = this.fs.getFile(cmdName, this.currentDir))) { // check if it's executable
 						return tmpFile; // return it
 					}
-				}
+				}*/
 			
 				if(this.fs.hasFile(this.fs.getFile(cmdSplit.slice(0, cmdSplit.length - 1).join('/'), curDir), cmdSplit[cmdSplit.length - 1])) { // check for it in the current dir
 					if(this.fs.isExec(tmpFile = this.fs.getFile(cmdName, curDir))) { // check if it's executable
@@ -117,7 +117,7 @@ define(function(require, exports, module) {
 			}
 			
 			if(curDir) files = merge(files, curDir.files); // also put in the files in curDir
-			files = merge(files, this.currentDir.files); // and the ones in this.currentDir
+			//files = merge(files, this.currentDir.files); // and the ones in this.currentDir
 			
 			return Object.keys(files).map(function(name) { // then just get the values
 				return files[name];

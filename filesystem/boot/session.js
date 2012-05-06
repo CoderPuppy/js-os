@@ -27,7 +27,7 @@ define(function(require, exports, module) {
 		}
 		
 		Session.prototype.terminal = function terminal(view) { // get a terminal
-			return this._terminal || new Terminal(this, view); // keep only one
+			return this._terminal || (this._terminal = new Terminal(this, view)); // keep only one
 		};
 		
 		return Session;
