@@ -4,10 +4,27 @@ define(function(require, exports, module) {
 	
 	fs.folder('/home', { create: true });
 	
+	var user;
+	var session;
+	
+	Object.defineProperties(exports, {
+		user: {
+			get: function() { return user; },
+			enumerable: true
+		},
+		session: {
+			get: function() { return session; },
+			enumerable: true
+		}
+	});
+	
 	var users = exports.users = {
 		// default users
 		
-		root: new User('root', 'password')
+		root: new User('root', {
+			authMethod: 'password',
+			admin: true
+		})
 	};
 	
 	var create = exports.create = function create(username, authType) {
@@ -20,9 +37,11 @@ define(function(require, exports, module) {
 		delete users[username];
 	};
 	
-	var login = exports.login = function login(username, password, options, cb) {
+	var login = exports.login = function login(username, password, level) {
 		if(!(users[username] instanceof User)) throw new Error('No such user: ' + username);
 		
-		return users[username].authenticate(password, options, cb);
+		user = users[username];
+		
+		return session = users[username].authenticate(password, level);
 	};
 });

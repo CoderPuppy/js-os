@@ -33,24 +33,27 @@ define(function(require, exports, module) {
 	}
 	
 	var User = exports.User = (function UserClass() { // Users start here
-		function User(name, authMethod) { // more precisly right here: the machine this user was created on, it's username and how it should authenticate
+		function User(name, options) { // more precisly right here: the machine this user was created on, it's username and how it should authenticate
 			var self = this; // save this
-			var __password; // keep the password private
+			var __authMethod = options.authMethod || undefined,
+				__admin = !!options.admin,
+				__sessions = [],
+				__password;
 			
 			this.name = name; // and it's name
-			this.sessions = [];
-			
-			this._authMethod = authMethod || 'always'; // and also how to authenticate
 			
 			initUserFolder(name);
 			
 			EventEmitter.call(this); // let this emit events
 			
-			function privlegedSelf(level) { // get a privleged version of it
-				level = level || User.BASIC; // make sure it has a level at which to create it
+			function getLevel(level) {
+				if(( !__admin && level === User.ADMIN ) || !level) level = User.BASIC;
 				
-				//return 'Terminal at: ' + level + ' level for: ' + self.name; // logging
-				return self.sessions[self.sessions.push(new Session(self, level)) - 1]; // Return a session for this and that level
+				return level;
+			}
+			
+			function privlegedSelf(level) { // get a privleged version of it
+				return __sessions[__sessions.push(new Session(self, level)) - 1]; // Return a session for this and that level
 			}
 			
 			this.password = function password(old, newP) { // password: set the password: the old password and the new password
@@ -59,8 +62,8 @@ define(function(require, exports, module) {
 					old = undefined; // and that we don't need a old password
 				}
 				
-				if(auth.auth(this._authMethod).authenticate(__password, old)) { // make sure we can change it
-					__password = auth.auth(this._authMethod).password(newP); // set it to the filtered result of the new password
+				if(auth.auth(__authMethod).authenticate(__password, old, User.CHANGE_PASSWORD)) { // make sure we can change it
+					__password = auth.auth(__authMethod).password(newP); // set it to the filtered result of the new password
 				} else {
 					console.warn('Unable to change password'); // say oh no we can't change the password
 				}
@@ -68,21 +71,14 @@ define(function(require, exports, module) {
 				return this; // and make it chainable
 			};
 			
-			this.authenticate = function authenticate(password, options) { // authenticate: authenticate the user using the `password` at level `options.level` and call cb
+			this.authenticate = function authenticate(password, level) { // authenticate: authenticate the user using the `password` at level `options.level` and call cb
+				level = getLevel(level);
 				
-				if(typeof(password) == 'object') { // no password but there are options
-					cb = options; // get the callback
-					options = password || {}; // and also the options || empty
-					password = undefined; // no password!!!
-				}
-				
-				options = options || {}; // make sure we have options
-				
-				if(auth.auth(this._authMethod).authenticate(__password, password)) { // check if the password was correct
-					this.emit('authenticate', options.level || User.BASIC, cb); // emit a general event
-					this.emit('athuenticate:' + ( options.level || User.BASIC ), cb) // and a more specific one
+				if(auth.auth(__authMethod).authenticate(__password, password, level)) { // check if the password was correct
+					this.emit('authenticate', level, cb); // emit a general event
+					this.emit('athuenticate:' + level, cb) // and a more specific one
 					
-					return privlegedSelf(options.level);
+					return privlegedSelf(level);
 				} else {
 					throw new Error('Could not authenticate: incorrect password');
 				}
@@ -93,6 +89,7 @@ define(function(require, exports, module) {
 		
 		User.BASIC = 'basic'; // some constants for levels of authentication this one for basic: just logging in
 		User.ADMIN = 'admin'; // and admin is: also be able to administer the system
+		User.CHANGE_PASSWORD = 'UsEr_cHaNgE-PaSwOrD';
 		
 		return User;
 	})();
